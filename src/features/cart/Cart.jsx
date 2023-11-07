@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import LinkButton from "../../ui/LinkButton";
 import Button from "../../ui/Button";
 import CartItem from "./CartItem";
+import EmptyCart from "./EmptyCart";
+import { useDispatch, useSelector } from "react-redux";
+import { clearCart, getCart } from "./cartSlice";
 
 const fakeCart = [
   {
@@ -28,13 +31,17 @@ const fakeCart = [
 ];
 
 function Cart() {
-  const cart = fakeCart;
+  const cart = useSelector(getCart);
+  const username = useSelector((state) => state.user.username);
+  const dispatch = useDispatch();
+
+  if (cart.length === 0) return <EmptyCart />;
 
   return (
     <div className="px-4 py-3">
       <LinkButton to="/menu">&larr; Back to menu</LinkButton>
 
-      <h2 className="mt-7 text-xl font-semibold">Your cart, %NAME%</h2>
+      <h2 className="mt-7 text-xl font-semibold">Your cart, {username}</h2>
 
       <ul className="divifr-y divide-stone-200 border-y">
         {cart.map((item) => (
@@ -46,7 +53,14 @@ function Cart() {
         <Button to="/order/new" type="primary">
           Order Pizza
         </Button>
-        <Button types="secondary">Clear cart</Button>
+        <Button
+          types="secondary"
+          onClick={() => {
+            dispatch(clearCart());
+          }}
+        >
+          Clear cart
+        </Button>
       </div>
     </div>
   );
